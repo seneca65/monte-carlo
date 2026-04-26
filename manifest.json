@@ -1,0 +1,22 @@
+{
+  "name": "Monte Carlo Retirement Simulator",
+  "short_name": "Monte Carlo",
+  "description": "Runs 10,000 retirement trials to calculate portfolio survival rate using random market returns and inflation.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f2f2f7",
+  "theme_color": "#4a7a66",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
