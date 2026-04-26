@@ -13,66 +13,44 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f2f7; color: #1c1c1e; min-height: 100vh; }
     .app { max-width: 430px; margin: 0 auto; padding: 0 0 40px; }
-
     .header { background: #fff; padding: 16px 16px 12px; border-bottom: 0.5px solid #d1d1d6; text-align: center; position: sticky; top: 0; z-index: 10; }
     .header h1 { font-size: 17px; font-weight: 600; color: #1c1c1e; }
     .header p { font-size: 12px; color: #8e8e93; margin-top: 2px; }
-
     .tab-bar { display: flex; background: #fff; border-bottom: 0.5px solid #d1d1d6; }
     .tab-btn { flex: 1; padding: 10px 4px 8px; font-size: 11px; font-weight: 400; color: #8e8e93; background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; }
     .tab-btn.active { color: #4a7a66; font-weight: 600; border-bottom-color: #4a7a66; }
-
     .section { display: none; padding: 16px; }
     .section.active { display: block; }
-
     .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .card-title { font-size: 11px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-
     .field { margin-bottom: 12px; }
     .field:last-child { margin-bottom: 0; }
     .field label { display: block; font-size: 13px; color: #3a3a3c; margin-bottom: 5px; font-weight: 500; }
     .field input { width: 100%; font-size: 16px; padding: 10px 12px; border: 1px solid #d1d1d6; border-radius: 10px; background: #fff; color: #1c1c1e; -webkit-appearance: none; }
     .field input:focus { outline: none; border-color: #4a7a66; box-shadow: 0 0 0 3px rgba(74,122,102,0.15); }
     .field .hint { font-size: 12px; color: #8e8e93; margin-top: 5px; line-height: 1.4; }
-
     .btn-full { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border-radius: 12px; border: none; background: #4a7a66; color: #fff; cursor: pointer; margin-top: 4px; }
     .btn-full:active { opacity: 0.8; transform: scale(0.98); }
     .btn-full:disabled { background: #b0c4bb; }
-
-    /* Survival rate display */
-    .survival-display { text-align: center; padding: 20px 0 16px; }
+    .survival-wrap { text-align: center; padding: 16px 0 12px; }
     .survival-pct { font-size: 56px; font-weight: 700; line-height: 1; }
     .survival-label { font-size: 13px; color: #8e8e93; margin-top: 6px; }
-    .survival-green { color: #2d6b4f; }
-    .survival-yellow { color: #856404; }
-    .survival-red { color: #721c24; }
-
-    /* Result rows */
+    .s-green { color: #2d6b4f; }
+    .s-yellow { color: #856404; }
+    .s-red { color: #721c24; }
     .result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 0.5px solid #f2f2f7; }
     .result-row:last-child { border-bottom: none; }
     .result-label { font-size: 14px; color: #8e8e93; }
     .result-value { font-size: 15px; font-weight: 600; color: #1c1c1e; }
-
-    /* Percentile table */
     .pct-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .pct-table th { text-align: left; font-size: 11px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.4px; padding: 0 0 8px; }
     .pct-table th:last-child { text-align: right; }
     .pct-table td { padding: 8px 0; border-bottom: 0.5px solid #f2f2f7; color: #3a3a3c; }
     .pct-table td:last-child { text-align: right; font-weight: 600; color: #1c1c1e; }
     .pct-table tr:last-child td { border-bottom: none; }
-
-    /* Chart */
-    .chart-wrap { position: relative; height: 180px; margin-top: 8px; }
-    canvas { width: 100% !important; }
-
-    /* Spinner */
-    .spinner { display: none; text-align: center; padding: 20px; color: #8e8e93; font-size: 14px; }
-    .spinner.show { display: block; }
-
-    /* Empty state */
+    .chart-note { font-size: 11px; color: #8e8e93; margin-top: 8px; text-align: center; line-height: 1.5; }
+    .spinner { display: none; text-align: center; padding: 12px 0; color: #8e8e93; font-size: 14px; }
     .empty { text-align: center; padding: 32px 0; color: #8e8e93; font-size: 15px; }
-
-    /* Help */
     .help-section { margin-bottom: 18px; }
     .help-section h3 { font-size: 15px; font-weight: 600; color: #1c1c1e; margin-bottom: 8px; }
     .help-section p { font-size: 14px; color: #3a3a3c; line-height: 1.6; margin-bottom: 6px; }
@@ -80,12 +58,6 @@
     .step-num { width: 26px; height: 26px; min-width: 26px; border-radius: 50%; background: #4a7a66; color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
     .step-text { font-size: 14px; color: #3a3a3c; line-height: 1.5; padding-top: 3px; }
     .formula-box { background: #f2f2f7; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #1c1c1e; line-height: 1.8; margin: 8px 0; font-family: monospace; }
-
-    /* Stat grid */
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .stat { background: #fff; border-radius: 12px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .stat-label { font-size: 11px; color: #8e8e93; font-weight: 500; margin-bottom: 4px; }
-    .stat-value { font-size: 16px; font-weight: 600; color: #1c1c1e; }
   </style>
 </head>
 <body>
@@ -101,7 +73,6 @@
     <button class="tab-btn" onclick="showTab('help')">Help</button>
   </div>
 
-  <!-- INPUTS -->
   <div id="tab-inputs" class="section active">
     <div class="card">
       <div class="card-title">Portfolio</div>
@@ -112,136 +83,120 @@
       </div>
       <div class="field">
         <label>Annual withdrawal rate (%)</label>
-        <input type="number" id="i-withdrawal" value="4" step="0.1" inputmode="decimal">
+        <input type="number" id="i-wd" value="4" step="0.1" inputmode="decimal">
         <div class="hint">Percentage of starting portfolio withdrawn each year, adjusted for inflation. Withdrawal occurs at the start of each year.</div>
       </div>
       <div class="field">
         <label>Simulation years</label>
         <input type="number" id="i-years" value="30" inputmode="numeric">
-        <div class="hint">How many years to simulate. Typically 25–35 for retirement planning.</div>
+        <div class="hint">Typically 25–35 years for retirement planning.</div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Market returns</div>
       <div class="field">
         <label>Mean annual return (%)</label>
-        <input type="number" id="i-ret-mean" value="7.5" step="0.1" inputmode="decimal">
-        <div class="hint">Expected average annual return of your portfolio. A balanced 70/30 stock/bond fund has historically averaged around 7–8%.</div>
+        <input type="number" id="i-rm" value="7.5" step="0.1" inputmode="decimal">
+        <div class="hint">Expected average annual return. A balanced 70/30 stock/bond fund has historically averaged around 7–8%.</div>
       </div>
       <div class="field">
         <label>Standard deviation of return (%)</label>
-        <input type="number" id="i-ret-std" value="12" step="0.1" inputmode="decimal">
-        <div class="hint">How much returns vary year to year. Higher = more volatile. A balanced fund is typically 10–15%.</div>
+        <input type="number" id="i-rs" value="12" step="0.1" inputmode="decimal">
+        <div class="hint">How much returns vary year to year. A balanced fund is typically 10–15%.</div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Inflation</div>
       <div class="field">
         <label>Mean annual inflation (%)</label>
-        <input type="number" id="i-inf-mean" value="2.5" step="0.1" inputmode="decimal">
-        <div class="hint">Expected average inflation rate. Historically around 2.5–3% in the US.</div>
+        <input type="number" id="i-im" value="2.5" step="0.1" inputmode="decimal">
       </div>
       <div class="field">
         <label>Standard deviation of inflation (%)</label>
-        <input type="number" id="i-inf-std" value="1.5" step="0.1" inputmode="decimal">
-        <div class="hint">How much inflation varies year to year. Typically 1–2%.</div>
+        <input type="number" id="i-is" value="1.5" step="0.1" inputmode="decimal">
       </div>
     </div>
-
     <button class="btn-full" id="run-btn" onclick="runSimulation()">Run simulation</button>
     <div class="spinner" id="spinner">Running 10,000 trials…</div>
   </div>
 
-  <!-- RESULTS -->
   <div id="tab-results" class="section">
     <div id="results-empty" class="empty">Run the simulation on the Inputs tab to see results.</div>
     <div id="results-content" style="display:none;">
-
       <div class="card">
-        <div class="survival-display">
+        <div class="survival-wrap">
           <div class="survival-pct" id="r-survival">—</div>
-          <div class="survival-label">portfolio survival rate</div>
+          <div class="survival-label">portfolio survival rate at end of period</div>
         </div>
         <div class="result-row"><span class="result-label">Trials run</span><span class="result-value">10,000</span></div>
-        <div class="result-row"><span class="result-label">Simulation years</span><span class="result-value" id="r-years">—</span></div>
-        <div class="result-row"><span class="result-label">Trials that survived</span><span class="result-value" id="r-survived">—</span></div>
-        <div class="result-row"><span class="result-label">Trials that failed</span><span class="result-value" id="r-failed">—</span></div>
+        <div class="result-row"><span class="result-label">Trials survived</span><span class="result-value" id="r-survived">—</span></div>
+        <div class="result-row"><span class="result-label">Trials failed</span><span class="result-value" id="r-failed">—</span></div>
         <div class="result-row"><span class="result-label">Median final balance</span><span class="result-value" id="r-median">—</span></div>
       </div>
-
+      <div class="card">
+        <div class="card-title">Survival curve — % of portfolios still alive each year</div>
+        <div style="position:relative; width:100%; height:220px;">
+          <canvas id="surv-chart" role="img" aria-label="Line chart showing percentage of portfolios surviving each year of retirement">Survival rate starts at 100% and decreases year by year as portfolios run out of money.</canvas>
+        </div>
+        <p class="chart-note">Starts at 100% — drops as portfolios run out of money each year.<br>The final point on the right is your overall survival rate.</p>
+      </div>
       <div class="card">
         <div class="card-title">Final balance percentiles</div>
         <table class="pct-table">
           <thead><tr><th>Percentile</th><th>Final balance</th></tr></thead>
           <tbody>
-            <tr><td>10th (worst 10%)</td><td id="p10">—</td></tr>
+            <tr><td>10th — worst 10%</td><td id="p10">—</td></tr>
             <tr><td>25th</td><td id="p25">—</td></tr>
-            <tr><td>50th (median)</td><td id="p50">—</td></tr>
+            <tr><td>50th — median</td><td id="p50">—</td></tr>
             <tr><td>75th</td><td id="p75">—</td></tr>
-            <tr><td>90th (best 10%)</td><td id="p90">—</td></tr>
+            <tr><td>90th — best 10%</td><td id="p90">—</td></tr>
           </tbody>
         </table>
       </div>
-
-      <div class="card">
-        <div class="card-title">Distribution of final balances</div>
-        <div class="chart-wrap">
-          <canvas id="hist-chart"></canvas>
-        </div>
-        <p style="font-size:11px;color:#8e8e93;margin-top:8px;text-align:center;">Each bar shows how many trials ended in that balance range. Balances below $0 are shown as $0.</p>
-      </div>
-
       <div class="card">
         <div class="card-title">Inputs used</div>
         <div class="result-row"><span class="result-label">Starting portfolio</span><span class="result-value" id="u-wealth">—</span></div>
-        <div class="result-row"><span class="result-label">Withdrawal rate</span><span class="result-value" id="u-withdrawal">—</span></div>
-        <div class="result-row"><span class="result-label">Mean return</span><span class="result-value" id="u-ret-mean">—</span></div>
-        <div class="result-row"><span class="result-label">Return std dev</span><span class="result-value" id="u-ret-std">—</span></div>
-        <div class="result-row"><span class="result-label">Mean inflation</span><span class="result-value" id="u-inf-mean">—</span></div>
-        <div class="result-row"><span class="result-label">Inflation std dev</span><span class="result-value" id="u-inf-std">—</span></div>
+        <div class="result-row"><span class="result-label">Withdrawal rate</span><span class="result-value" id="u-wd">—</span></div>
+        <div class="result-row"><span class="result-label">Years</span><span class="result-value" id="u-yr">—</span></div>
+        <div class="result-row"><span class="result-label">Mean return / std dev</span><span class="result-value" id="u-ret">—</span></div>
+        <div class="result-row"><span class="result-label">Mean inflation / std dev</span><span class="result-value" id="u-inf">—</span></div>
       </div>
-
     </div>
   </div>
 
-  <!-- HELP -->
   <div id="tab-help" class="section">
     <div class="card">
-      <div class="card-title">How this works</div>
       <div class="help-section">
         <h3>What is a Monte Carlo simulation?</h3>
-        <p>Instead of assuming a fixed return every year, the simulator runs 10,000 different retirement scenarios, each with a different random sequence of market returns and inflation rates. Some years the market goes up a lot, some years it drops. The simulation captures that real-world randomness.</p>
-        <p>At the end, you can see what percentage of those 10,000 scenarios left the portfolio intact — that is your survival rate.</p>
+        <p>Instead of assuming a fixed return every year, the simulator runs 10,000 different retirement scenarios — each with a different random sequence of market returns and inflation rates. At the end, you see what percentage of those scenarios left the portfolio intact. That is your survival rate.</p>
+      </div>
+      <div class="help-section">
+        <h3>How to read the survival curve</h3>
+        <p>The curve starts at 100% on the left — all 10,000 trials are alive in year one. Each year the line drops as some trials run out of money. A flat line staying near the top is excellent. A steep early drop means the withdrawal rate is too aggressive. The final point on the right is your overall survival rate.</p>
       </div>
       <div class="help-section">
         <h3>How each trial works</h3>
         <div class="help-step"><div class="step-num">1</div><div class="step-text">Start with your portfolio value.</div></div>
-        <div class="help-step"><div class="step-num">2</div><div class="step-text">At the beginning of each year, withdraw the annual amount (starting withdrawal adjusted for cumulative inflation).</div></div>
-        <div class="help-step"><div class="step-num">3</div><div class="step-text">Apply a random market return for the year (drawn from a normal distribution using your mean and std dev).</div></div>
-        <div class="help-step"><div class="step-num">4</div><div class="step-text">Apply a random inflation rate for the year (drawn from a normal distribution using your mean and std dev).</div></div>
-        <div class="help-step"><div class="step-num">5</div><div class="step-text">Repeat for the number of simulation years. If the portfolio hits zero, the trial fails.</div></div>
-        <div class="help-step"><div class="step-num">6</div><div class="step-text">After 10,000 trials, count how many survived. That percentage is your survival rate.</div></div>
+        <div class="help-step"><div class="step-num">2</div><div class="step-text">Withdraw the annual amount at the start of each year, adjusted for cumulative inflation.</div></div>
+        <div class="help-step"><div class="step-num">3</div><div class="step-text">Apply a random market return for the year.</div></div>
+        <div class="help-step"><div class="step-num">4</div><div class="step-text">Apply a random inflation rate for the year.</div></div>
+        <div class="help-step"><div class="step-num">5</div><div class="step-text">Repeat for the number of simulation years. If the portfolio hits zero the trial fails.</div></div>
       </div>
       <div class="help-section">
         <h3>What survival rate should I aim for?</h3>
-        <p>Most financial planners suggest targeting 85–95% survival. A 90% rate means that in 9 out of 10 simulated retirements your portfolio lasted the full period. Higher is safer but may mean withdrawing less than you could.</p>
+        <p>Most financial planners suggest targeting 85–95%. A 90% rate means 9 out of 10 simulated retirements lasted the full period. Higher is safer but may mean withdrawing less than you could.</p>
       </div>
       <div class="help-section">
         <h3>Suggested starting inputs</h3>
-        <p>These are reasonable starting points based on long-term historical data for a balanced 70/30 stock/bond portfolio:</p>
-        <div class="formula-box">
-Mean return:       7.5%
-Std dev return:   12.0%
-Mean inflation:    2.5%
-Std dev inflation: 1.5%
-Years:              30
-        </div>
+        <div class="formula-box">Mean return:        7.5%
+Std dev return:    12.0%
+Mean inflation:     2.5%
+Std dev inflation:  1.5%
+Years:               30</div>
       </div>
       <div class="help-section">
         <h3>Using with the Endowment Planner</h3>
-        <p>Run the simulator to find a withdrawal rate that gives you a survival rate you are comfortable with — typically 90% or higher. Then enter that rate into the Endowment Withdrawal Planner to manage your withdrawals year by year using the Yale smoothing formula.</p>
+        <p>Find a withdrawal rate here that gives 90%+ survival, then enter that rate into the Endowment Withdrawal Planner to manage your withdrawals year by year using the Yale smoothing formula.</p>
       </div>
       <div class="help-section">
         <h3>Installing on iPhone</h3>
@@ -251,216 +206,150 @@ Years:              30
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
-var chartInstance = null;
+  var survChart = null;
 
-function showTab(name) {
-  var names = ['inputs','results','help'];
-  document.querySelectorAll('.tab-btn').forEach(function(t,i){ t.classList.toggle('active', names[i]===name); });
-  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById('tab-'+name).classList.add('active');
-}
-
-function fmt(n) {
-  if (n < 0) return '-$' + Math.round(Math.abs(n)).toLocaleString();
-  return '$' + Math.round(n).toLocaleString();
-}
-
-// Box-Muller transform for normal random numbers
-function randn() {
-  var u = 0, v = 0;
-  while (u === 0) u = Math.random();
-  while (v === 0) v = Math.random();
-  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-}
-
-function runSimulation() {
-  var wealth    = parseFloat(document.getElementById('i-wealth').value);
-  var wdPct     = parseFloat(document.getElementById('i-withdrawal').value) / 100;
-  var years     = parseInt(document.getElementById('i-years').value);
-  var retMean   = parseFloat(document.getElementById('i-ret-mean').value) / 100;
-  var retStd    = parseFloat(document.getElementById('i-ret-std').value) / 100;
-  var infMean   = parseFloat(document.getElementById('i-inf-mean').value) / 100;
-  var infStd    = parseFloat(document.getElementById('i-inf-std').value) / 100;
-
-  if (isNaN(wealth) || isNaN(wdPct) || isNaN(years) || isNaN(retMean) || isNaN(retStd) || isNaN(infMean) || isNaN(infStd)) {
-    alert('Please fill in all fields.'); return;
+  function showTab(name) {
+    var names = ['inputs','results','help'];
+    document.querySelectorAll('.tab-btn').forEach(function(t,i){ t.classList.toggle('active', names[i]===name); });
+    document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('tab-'+name).classList.add('active');
   }
 
-  document.getElementById('run-btn').disabled = true;
-  document.getElementById('spinner').classList.add('show');
+  function randn() {
+    var u = 0, v = 0;
+    while (!u) u = Math.random();
+    while (!v) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
 
-  // Run async so UI updates
-  setTimeout(function() {
-    var N = 10000;
-    var initialWithdrawal = wealth * wdPct;
-    var finalBalances = [];
-    var survived = 0;
+  function fmt(n) {
+    if (n < 0) return '-$' + Math.round(Math.abs(n)).toLocaleString();
+    return '$' + Math.round(n).toLocaleString();
+  }
 
-    for (var t = 0; t < N; t++) {
-      var portfolio = wealth;
-      var withdrawal = initialWithdrawal;
-      var alive = true;
+  function runSimulation() {
+    var wealth = parseFloat(document.getElementById('i-wealth').value);
+    var wdPct  = parseFloat(document.getElementById('i-wd').value) / 100;
+    var years  = parseInt(document.getElementById('i-years').value);
+    var rm     = parseFloat(document.getElementById('i-rm').value) / 100;
+    var rs     = parseFloat(document.getElementById('i-rs').value) / 100;
+    var im     = parseFloat(document.getElementById('i-im').value) / 100;
+    var is_    = parseFloat(document.getElementById('i-is').value) / 100;
 
-      for (var y = 0; y < years; y++) {
-        // Withdraw at start of year
-        portfolio -= withdrawal;
-        if (portfolio <= 0) { portfolio = 0; alive = false; break; }
+    if ([wealth,wdPct,years,rm,rs,im,is_].some(isNaN)) { alert('Please fill in all fields.'); return; }
 
-        // Apply market return
-        var ret = retMean + retStd * randn();
-        portfolio *= (1 + ret);
+    document.getElementById('run-btn').disabled = true;
+    document.getElementById('spinner').style.display = 'block';
 
-        // Adjust next year's withdrawal for inflation
-        var inf = infMean + infStd * randn();
-        withdrawal *= (1 + inf);
+    setTimeout(function() {
+      var N = 10000;
+      var initWd = wealth * wdPct;
+      var finals = [];
+      var survived = 0;
+      var aliveByYear = new Array(years).fill(0);
+
+      for (var t = 0; t < N; t++) {
+        var p = wealth, wd = initWd, failYear = -1;
+        for (var y = 0; y < years; y++) {
+          p -= wd;
+          if (p <= 0) { p = 0; failYear = y; break; }
+          p *= (1 + rm + rs * randn());
+          wd *= (1 + im + is_ * randn());
+        }
+        finals.push(p);
+        if (failYear === -1) {
+          survived++;
+          for (var y2 = 0; y2 < years; y2++) aliveByYear[y2]++;
+        } else {
+          for (var y3 = 0; y3 < failYear; y3++) aliveByYear[y3]++;
+        }
       }
 
-      finalBalances.push(portfolio);
-      if (alive) survived++;
-    }
+      finals.sort(function(a,b){ return a-b; });
+      var sr = (survived / N * 100).toFixed(1);
+      var p10 = finals[Math.floor(N*0.10)];
+      var p25 = finals[Math.floor(N*0.25)];
+      var p50 = finals[Math.floor(N*0.50)];
+      var p75 = finals[Math.floor(N*0.75)];
+      var p90 = finals[Math.floor(N*0.90)];
 
-    // Sort for percentiles
-    finalBalances.sort(function(a,b){ return a-b; });
+      var el = document.getElementById('r-survival');
+      el.textContent = sr + '%';
+      el.className = 'survival-pct ' + (parseFloat(sr) >= 90 ? 's-green' : parseFloat(sr) >= 75 ? 's-yellow' : 's-red');
 
-    var survivalRate = (survived / N * 100).toFixed(1);
-    var p10 = finalBalances[Math.floor(N * 0.10)];
-    var p25 = finalBalances[Math.floor(N * 0.25)];
-    var p50 = finalBalances[Math.floor(N * 0.50)];
-    var p75 = finalBalances[Math.floor(N * 0.75)];
-    var p90 = finalBalances[Math.floor(N * 0.90)];
+      document.getElementById('r-survived').textContent = survived.toLocaleString();
+      document.getElementById('r-failed').textContent = (N-survived).toLocaleString();
+      document.getElementById('r-median').textContent = fmt(p50);
+      document.getElementById('p10').textContent = fmt(p10);
+      document.getElementById('p25').textContent = fmt(p25);
+      document.getElementById('p50').textContent = fmt(p50);
+      document.getElementById('p75').textContent = fmt(p75);
+      document.getElementById('p90').textContent = fmt(p90);
+      document.getElementById('u-wealth').textContent = fmt(wealth);
+      document.getElementById('u-wd').textContent = (wdPct*100).toFixed(1) + '%';
+      document.getElementById('u-yr').textContent = years + ' years';
+      document.getElementById('u-ret').textContent = (rm*100).toFixed(1) + '% / ' + (rs*100).toFixed(1) + '%';
+      document.getElementById('u-inf').textContent = (im*100).toFixed(1) + '% / ' + (is_*100).toFixed(1) + '%';
 
-    // Update survival display
-    var survEl = document.getElementById('r-survival');
-    survEl.textContent = survivalRate + '%';
-    survEl.className = 'survival-pct';
-    var sr = parseFloat(survivalRate);
-    if (sr >= 90) survEl.classList.add('survival-green');
-    else if (sr >= 75) survEl.classList.add('survival-yellow');
-    else survEl.classList.add('survival-red');
+      var survPcts = aliveByYear.map(function(a) { return parseFloat((a / N * 100).toFixed(2)); });
+      var xLabels = survPcts.map(function(_, i) { return (i+1) % 5 === 0 || i === 0 ? 'Yr ' + (i+1) : ''; });
+      buildChart(xLabels, survPcts, parseFloat(sr));
 
-    document.getElementById('r-years').textContent = years + ' years';
-    document.getElementById('r-survived').textContent = survived.toLocaleString();
-    document.getElementById('r-failed').textContent = (N - survived).toLocaleString();
-    document.getElementById('r-median').textContent = fmt(p50);
-
-    document.getElementById('p10').textContent = fmt(p10);
-    document.getElementById('p25').textContent = fmt(p25);
-    document.getElementById('p50').textContent = fmt(p50);
-    document.getElementById('p75').textContent = fmt(p75);
-    document.getElementById('p90').textContent = fmt(p90);
-
-    // Inputs summary
-    document.getElementById('u-wealth').textContent = fmt(wealth);
-    document.getElementById('u-withdrawal').textContent = (wdPct*100).toFixed(1) + '%';
-    document.getElementById('u-ret-mean').textContent = (retMean*100).toFixed(1) + '%';
-    document.getElementById('u-ret-std').textContent = (retStd*100).toFixed(1) + '%';
-    document.getElementById('u-inf-mean').textContent = (infMean*100).toFixed(1) + '%';
-    document.getElementById('u-inf-std').textContent = (infStd*100).toFixed(1) + '%';
-
-    // Build histogram
-    drawHistogram(finalBalances, wealth);
-
-    document.getElementById('results-empty').style.display = 'none';
-    document.getElementById('results-content').style.display = 'block';
-    document.getElementById('run-btn').disabled = false;
-    document.getElementById('spinner').classList.remove('show');
-    showTab('results');
-  }, 30);
-}
-
-function drawHistogram(balances, wealth) {
-  var canvas = document.getElementById('hist-chart');
-  var ctx = canvas.getContext('2d');
-
-  // Determine range — cap at 5x starting wealth for readability
-  var maxVal = Math.min(Math.max.apply(null, balances), wealth * 5);
-  var minVal = 0;
-  var bins = 20;
-  var binSize = (maxVal - minVal) / bins;
-  var counts = new Array(bins).fill(0);
-  var overflowCount = 0;
-
-  balances.forEach(function(b) {
-    if (b >= maxVal) { overflowCount++; return; }
-    var idx = Math.floor((b - minVal) / binSize);
-    if (idx < 0) idx = 0;
-    if (idx >= bins) idx = bins - 1;
-    counts[idx]++;
-  });
-  counts[bins-1] += overflowCount;
-
-  var labels = counts.map(function(_, i) {
-    var val = minVal + i * binSize;
-    if (val >= 1000000) return '$' + (val/1000000).toFixed(1) + 'M';
-    return '$' + Math.round(val/1000) + 'K';
-  });
-
-  if (chartInstance) { chartInstance.destroy(); }
-
-  // Simple canvas chart — no library needed
-  var dpr = window.devicePixelRatio || 1;
-  var rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = 180 * dpr;
-  ctx.scale(dpr, dpr);
-
-  var w = rect.width;
-  var h = 180;
-  var padL = 8, padR = 8, padT = 10, padB = 30;
-  var chartW = w - padL - padR;
-  var chartH = h - padT - padB;
-  var maxCount = Math.max.apply(null, counts);
-  var barW = chartW / bins;
-
-  ctx.clearRect(0, 0, w, h);
-
-  // Draw bars
-  counts.forEach(function(c, i) {
-    var barH = (c / maxCount) * chartH;
-    var x = padL + i * barW;
-    var y = padT + chartH - barH;
-
-    // Color based on position (left = failed/low, right = high)
-    var ratio = i / bins;
-    if (ratio < 0.15) ctx.fillStyle = '#f8d7da';
-    else if (ratio < 0.35) ctx.fillStyle = '#fff3cd';
-    else ctx.fillStyle = '#d4edda';
-
-    ctx.fillRect(x + 1, y, barW - 2, barH);
-  });
-
-  // X axis labels — show every 4th
-  ctx.fillStyle = '#8e8e93';
-  ctx.font = '9px -apple-system, sans-serif';
-  ctx.textAlign = 'center';
-  for (var i = 0; i < bins; i += 4) {
-    var x = padL + i * barW + barW/2;
-    var val = minVal + i * binSize;
-    var label = val >= 1000000 ? '$' + (val/1000000).toFixed(1) + 'M' : '$' + Math.round(val/1000) + 'K';
-    ctx.fillText(label, x, h - 8);
+      document.getElementById('results-empty').style.display = 'none';
+      document.getElementById('results-content').style.display = 'block';
+      document.getElementById('run-btn').disabled = false;
+      document.getElementById('spinner').style.display = 'none';
+      showTab('results');
+    }, 30);
   }
 
-  // Draw baseline
-  ctx.strokeStyle = '#d1d1d6';
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(padL, padT + chartH);
-  ctx.lineTo(padL + chartW, padT + chartH);
-  ctx.stroke();
-}
+  function buildChart(labels, data, finalSr) {
+    if (survChart) { survChart.destroy(); survChart = null; }
+    var lineColor = finalSr >= 90 ? '#2d6b4f' : finalSr >= 75 ? '#b38600' : '#8b2020';
+    var fillColor = finalSr >= 90 ? 'rgba(45,107,79,0.12)' : finalSr >= 75 ? 'rgba(179,134,0,0.12)' : 'rgba(139,32,32,0.12)';
 
-// Redraw chart on orientation change
-window.addEventListener('resize', function() {
-  var content = document.getElementById('results-content');
-  if (content.style.display !== 'none') {
-    // Chart will redraw on next run — no stored data to redraw from here
+    survChart = new Chart(document.getElementById('surv-chart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          borderColor: lineColor,
+          backgroundColor: fillColor,
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: function(items) { return 'Year ' + (items[0].dataIndex + 1); },
+              label: function(item) { return item.raw.toFixed(1) + '% of portfolios surviving'; }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { font: { size: 10 }, maxRotation: 0 }, grid: { display: false } },
+          y: {
+            min: 0, max: 100,
+            ticks: { font: { size: 10 }, callback: function(v) { return v + '%'; }, stepSize: 20 },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          }
+        }
+      }
+    });
   }
-});
 </script>
 </body>
 </html>
