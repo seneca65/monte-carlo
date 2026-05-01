@@ -1,354 +1,546 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Monte Carlo">
-  <meta name="theme-color" content="#4a7a66">
-  <link rel="manifest" href="manifest.json">
-  <title>Monte Carlo Retirement Simulator</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f2f7; color: #1c1c1e; min-height: 100vh; }
-    .app { max-width: 430px; margin: 0 auto; padding: 0 0 40px; }
-    .header { background: #fff; padding: 16px 16px 12px; border-bottom: 0.5px solid #d1d1d6; text-align: center; position: sticky; top: 0; z-index: 10; }
-    .header h1 { font-size: 17px; font-weight: 600; color: #1c1c1e; }
-    .header p { font-size: 12px; color: #8e8e93; margin-top: 2px; }
-    .tab-bar { display: flex; background: #fff; border-bottom: 0.5px solid #d1d1d6; }
-    .tab-btn { flex: 1; padding: 10px 4px 8px; font-size: 11px; font-weight: 400; color: #8e8e93; background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; }
-    .tab-btn.active { color: #4a7a66; font-weight: 600; border-bottom-color: #4a7a66; }
-    .section { display: none; padding: 16px; }
-    .section.active { display: block; }
-    .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .card-title { font-size: 11px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-    .field { margin-bottom: 12px; }
-    .field:last-child { margin-bottom: 0; }
-    .field label { display: block; font-size: 13px; color: #3a3a3c; margin-bottom: 5px; font-weight: 500; }
-    .field input { width: 100%; font-size: 16px; padding: 10px 12px; border: 1px solid #d1d1d6; border-radius: 10px; background: #fff; color: #1c1c1e; -webkit-appearance: none; }
-    .field input:focus { outline: none; border-color: #4a7a66; box-shadow: 0 0 0 3px rgba(74,122,102,0.15); }
-    .field .hint { font-size: 12px; color: #8e8e93; margin-top: 5px; line-height: 1.4; }
-    .btn-full { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border-radius: 12px; border: none; background: #4a7a66; color: #fff; cursor: pointer; margin-top: 4px; }
-    .btn-full:active { opacity: 0.8; transform: scale(0.98); }
-    .btn-full:disabled { background: #b0c4bb; }
-    .survival-wrap { text-align: center; padding: 16px 0 12px; }
-    .survival-pct { font-size: 56px; font-weight: 700; line-height: 1; }
-    .survival-label { font-size: 13px; color: #8e8e93; margin-top: 6px; }
-    .s-green { color: #2d6b4f; }
-    .s-yellow { color: #856404; }
-    .s-red { color: #721c24; }
-    .result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 0.5px solid #f2f2f7; }
-    .result-row:last-child { border-bottom: none; }
-    .result-label { font-size: 14px; color: #8e8e93; }
-    .result-value { font-size: 15px; font-weight: 600; color: #1c1c1e; }
-    .pct-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .pct-table th { text-align: left; font-size: 11px; font-weight: 600; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.4px; padding: 0 0 8px; }
-    .pct-table th:last-child { text-align: right; }
-    .pct-table td { padding: 8px 0; border-bottom: 0.5px solid #f2f2f7; color: #3a3a3c; }
-    .pct-table td:last-child { text-align: right; font-weight: 600; color: #1c1c1e; }
-    .pct-table tr:last-child td { border-bottom: none; }
-    .chart-note { font-size: 11px; color: #8e8e93; margin-top: 8px; text-align: center; line-height: 1.5; }
-    .spinner { display: none; text-align: center; padding: 12px 0; color: #8e8e93; font-size: 14px; }
-    .empty { text-align: center; padding: 32px 0; color: #8e8e93; font-size: 15px; }
-    .help-section { margin-bottom: 18px; }
-    .help-section h3 { font-size: 15px; font-weight: 600; color: #1c1c1e; margin-bottom: 8px; }
-    .help-section p { font-size: 14px; color: #3a3a3c; line-height: 1.6; margin-bottom: 6px; }
-    .help-step { display: flex; gap: 12px; margin-bottom: 12px; }
-    .step-num { width: 26px; height: 26px; min-width: 26px; border-radius: 50%; background: #4a7a66; color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
-    .step-text { font-size: 14px; color: #3a3a3c; line-height: 1.5; padding-top: 3px; }
-    .formula-box { background: #f2f2f7; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #1c1c1e; line-height: 1.8; margin: 8px 0; font-family: monospace; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#8aaa98" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>Monte Carlo Retirement Simulator</title>
+<style>
+  :root {
+    --bg:       #b8ccc0;
+    --bg2:      rgba(255,255,255,0.52);
+    --bg3:      rgba(255,255,255,0.28);
+    --titlebar: #8aaa98;
+    --border:   rgba(60,100,80,0.28);
+    --text:     #1e3228;
+    --text2:    #3d5a4e;
+    --text3:    #5a7a6a;
+    --accent:   #3d6b57;
+    --accent2:  #2e5242;
+    --btn-bg:   rgba(255,255,255,0.30);
+    --input-bg: rgba(255,255,255,0.65);
+    --positive: #1e5c38;
+    --negative: #8a2f2f;
+    --help-bg:  rgba(255,255,255,0.96);
+  }
+  .dark {
+    --bg:       #1e2b25;
+    --bg2:      rgba(255,255,255,0.07);
+    --bg3:      rgba(255,255,255,0.04);
+    --titlebar: #162019;
+    --border:   rgba(120,180,140,0.18);
+    --text:     #d4e8dc;
+    --text2:    #9abfac;
+    --text3:    #6a9480;
+    --accent:   #5a9977;
+    --accent2:  #4a7d62;
+    --btn-bg:   rgba(255,255,255,0.10);
+    --input-bg: rgba(255,255,255,0.08);
+    --positive: #6abf8a;
+    --negative: #e07070;
+    --help-bg:  #1e2b25;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: sans-serif; font-size: 15px; background: var(--bg); color: var(--text); transition: background 0.2s, color 0.2s; }
+
+  /* Titlebar */
+  #titlebar { background: var(--titlebar); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+  #titlebar .title { font-size: 14px; font-weight: 600; color: var(--text); }
+  #titlebar .tb-btns { display: flex; gap: 8px; }
+  #titlebar button { background: var(--btn-bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 13px; color: var(--text); cursor: pointer; font-family: sans-serif; }
+
+  /* Content */
+  .content { padding: 12px; display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; }
+
+  /* Panels */
+  .panel { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px; }
+  .panel-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text2); margin-bottom: 10px; }
+  hr.div { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
+
+  /* Fields */
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
+  .field input { width: 100%; background: var(--input-bg); border: 0.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 15px; color: var(--text); font-family: sans-serif; outline: none; }
+  .field input:focus { border-color: var(--accent); }
+  .field .hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Run button */
+  #run-btn { width: 100%; background: var(--accent); border: none; border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 600; color: #e8f4ee; cursor: pointer; font-family: sans-serif; }
+  #run-btn:active { background: var(--accent2); }
+  #run-btn:disabled { opacity: 0.6; }
+
+  /* Stat cards */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; }
+  .stat-card.full { grid-column: span 2; }
+  .s-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .s-value { font-size: 20px; font-weight: 600; color: var(--text); }
+  .s-value.pos { color: var(--positive); }
+  .s-value.neg { color: var(--negative); }
+  .s-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* Chart */
+  .chart-wrap { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px; }
+  canvas { width: 100% !important; }
+
+  /* Percentile cards */
+  .pct-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pct-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 8px; padding: 8px 6px; text-align: center; }
+  .p-label { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+  .p-value { font-size: 12px; font-weight: 600; color: var(--text); }
+
+  /* Survival bar */
+  .survival-panel { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .survival-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .survival-header .s-pct { font-weight: 600; color: var(--positive); }
+  .survival-track { height: 14px; background: rgba(138,58,58,0.22); border-radius: 7px; overflow: hidden; }
+  .survival-fill { height: 100%; background: var(--accent); border-radius: 7px; transition: width 0.6s ease; }
+
+  /* Spinner */
+  #spinner { display: none; text-align: center; padding: 30px; color: var(--text2); font-size: 14px; }
+  #results-area { display: none; flex-direction: column; gap: 12px; }
+  #empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; }
+
+  /* Help overlay */
+  .help-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; }
+  .help-overlay.show { display: block; }
+  .help-box { background: var(--help-bg); margin: 20px auto; max-width: 600px; border-radius: 14px; padding: 20px; color: var(--text); }
+  .help-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .help-header h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+  .help-close { background: var(--btn-bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 13px; color: var(--text); cursor: pointer; font-family: sans-serif; }
+  .help-section { margin-bottom: 20px; }
+  .help-section h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px; padding-bottom: 4px; border-bottom: 0.5px solid var(--border); }
+  .help-section p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
+  .help-section ul { padding-left: 16px; }
+  .help-section li { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 4px; }
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .ref-table th { background: rgba(61,107,87,0.15); color: var(--text2); padding: 6px 8px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ref-table td { padding: 7px 8px; color: var(--text2); border-bottom: 0.5px solid var(--border); font-size: 12px; }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .highlight-box { background: rgba(61,107,87,0.12); border: 0.5px solid var(--accent); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+  .highlight-box p { margin-bottom: 0; }
+</style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <h1>Monte Carlo Simulator</h1>
-    <p>Retirement portfolio survival · 10,000 trials</p>
-  </div>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('inputs')">Inputs</button>
-    <button class="tab-btn" onclick="showTab('results')">Results</button>
-    <button class="tab-btn" onclick="showTab('help')">Help</button>
+<div id="titlebar">
+  <span class="title">Monte Carlo Simulator</span>
+  <div class="tb-btns">
+    <button onclick="toggleHelp()">?  Help</button>
+    <button onclick="toggleDark()" id="dark-btn">Dark</button>
   </div>
+</div>
 
-  <div id="tab-inputs" class="section active">
-    <div class="card">
-      <div class="card-title">Portfolio</div>
+<div class="content">
+  <!-- Inputs -->
+  <div class="panel">
+    <div class="panel-title">Portfolio</div>
+    <div class="field">
+      <label>Initial wealth ($)</label>
+      <input type="number" id="initial_wealth" value="1294961" step="1000" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <label>Withdrawal %</label>
+      <input type="number" id="withdrawal_pct" value="3.2" step="0.1" inputmode="decimal" />
+      <div class="hint" id="withdrawal-hint">Year 1 withdrawal: $41,439</div>
+    </div>
+    <div class="field">
+      <label>Simulation years</label>
+      <input type="number" id="years" value="30" step="1" inputmode="numeric" />
+    </div>
+
+    <hr class="div" />
+    <div class="panel-title">Market return</div>
+    <div class="field-row">
       <div class="field">
-        <label>Starting portfolio value ($)</label>
-        <input type="number" id="i-wealth" value="1000000" inputmode="numeric">
-        <div class="hint">Your total invested balance at retirement.</div>
+        <label>Mean (%)</label>
+        <input type="number" id="avg_ret" value="7.5" step="0.1" inputmode="decimal" />
       </div>
       <div class="field">
-        <label>Annual withdrawal rate (%)</label>
-        <input type="number" id="i-wd" value="4" step="0.1" inputmode="decimal">
-        <div class="hint">Percentage of starting portfolio withdrawn each year, adjusted for inflation. Withdrawal occurs at the start of each year.</div>
-      </div>
-      <div class="field">
-        <label>Simulation years</label>
-        <input type="number" id="i-years" value="30" inputmode="numeric">
-        <div class="hint">Typically 25–35 years for retirement planning.</div>
+        <label>Std dev (%)</label>
+        <input type="number" id="std_ret" value="11.2" step="0.1" inputmode="decimal" />
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Market returns</div>
+
+    <hr class="div" />
+    <div class="panel-title">Inflation</div>
+    <div class="field-row">
       <div class="field">
-        <label>Mean annual return (%)</label>
-        <input type="number" id="i-rm" value="8.5" step="0.1" inputmode="decimal">
-        <div class="hint">Expected average annual return. VBIAX (Vanguard Balanced Index) has averaged around 8.5–9.5% over 10 years.</div>
+        <label>Mean (%)</label>
+        <input type="number" id="avg_inf" value="3.1" step="0.1" inputmode="decimal" />
       </div>
       <div class="field">
-        <label>Standard deviation of return (%)</label>
-        <input type="number" id="i-rs" value="10" step="0.1" inputmode="decimal">
-        <div class="hint">How much returns vary year to year. VBIAX (60/40) typically runs 9–11%.</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Inflation</div>
-      <div class="field">
-        <label>Mean annual inflation (%)</label>
-        <input type="number" id="i-im" value="2.5" step="0.1" inputmode="decimal">
-      </div>
-      <div class="field">
-        <label>Standard deviation of inflation (%)</label>
-        <input type="number" id="i-is" value="1.5" step="0.1" inputmode="decimal">
+        <label>Std dev (%)</label>
+        <input type="number" id="std_inf" value="3.7" step="0.1" inputmode="decimal" />
       </div>
     </div>
-    <button class="btn-full" id="run-btn" onclick="runSimulation()">Run simulation</button>
-    <div class="spinner" id="spinner">Running 10,000 trials…</div>
+
+    <hr class="div" />
+    <button id="run-btn" onclick="runSim()">Run Simulation (10,000 trials)</button>
   </div>
 
-  <div id="tab-results" class="section">
-    <div id="results-empty" class="empty">Run the simulation on the Inputs tab to see results.</div>
-    <div id="results-content" style="display:none;">
-      <div class="card">
-        <div class="survival-wrap">
-          <div class="survival-pct" id="r-survival">—</div>
-          <div class="survival-label">portfolio survival rate at end of period</div>
-        </div>
-        <div class="result-row"><span class="result-label">Trials run</span><span class="result-value">10,000</span></div>
-        <div class="result-row"><span class="result-label">Trials survived</span><span class="result-value" id="r-survived">—</span></div>
-        <div class="result-row"><span class="result-label">Trials failed</span><span class="result-value" id="r-failed">—</span></div>
-        <div class="result-row"><span class="result-label">Median final balance</span><span class="result-value" id="r-median">—</span></div>
+  <!-- Results -->
+  <div id="empty-state">Set your parameters and tap Run to see results.</div>
+  <div id="spinner">Running 10,000 trials…</div>
+
+  <div id="results-area">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="s-label">Median end balance</div>
+        <div class="s-value pos" id="r-median">—</div>
+        <div class="s-sub">50th percentile</div>
       </div>
-      <div class="card">
-        <div class="card-title">Survival curve — % of portfolios still alive each year</div>
-        <div style="position:relative; width:100%; height:220px;">
-          <canvas id="surv-chart" role="img" aria-label="Line chart showing percentage of portfolios surviving each year of retirement">Survival rate starts at 100% and decreases year by year as portfolios run out of money.</canvas>
-        </div>
-        <p class="chart-note">Starts at 100% — drops as portfolios run out of money each year.<br>The final point on the right is your overall survival rate.</p>
+      <div class="stat-card">
+        <div class="s-label">Average end balance</div>
+        <div class="s-value pos" id="r-mean">—</div>
+        <div class="s-sub">Mean of 10,000 runs</div>
       </div>
-      <div class="card">
-        <div class="card-title">Final balance percentiles</div>
-        <table class="pct-table">
-          <thead><tr><th>Percentile</th><th>Final balance</th></tr></thead>
-          <tbody>
-            <tr><td>10th — worst 10%</td><td id="p10">—</td></tr>
-            <tr><td>25th</td><td id="p25">—</td></tr>
-            <tr><td>50th — median</td><td id="p50">—</td></tr>
-            <tr><td>75th</td><td id="p75">—</td></tr>
-            <tr><td>90th — best 10%</td><td id="p90">—</td></tr>
-          </tbody>
-        </table>
+      <div class="stat-card">
+        <div class="s-label">Std deviation</div>
+        <div class="s-value" id="r-std">—</div>
+        <div class="s-sub">Spread of outcomes</div>
       </div>
-      <div class="card">
-        <div class="card-title">Inputs used</div>
-        <div class="result-row"><span class="result-label">Starting portfolio</span><span class="result-value" id="u-wealth">—</span></div>
-        <div class="result-row"><span class="result-label">Withdrawal rate</span><span class="result-value" id="u-wd">—</span></div>
-        <div class="result-row"><span class="result-label">Years</span><span class="result-value" id="u-yr">—</span></div>
-        <div class="result-row"><span class="result-label">Mean return / std dev</span><span class="result-value" id="u-ret">—</span></div>
-        <div class="result-row"><span class="result-label">Mean inflation / std dev</span><span class="result-value" id="u-inf">—</span></div>
+      <div class="stat-card">
+        <div class="s-label">Ruin rate</div>
+        <div class="s-value neg" id="r-ruin">—</div>
+        <div class="s-sub">Balance went negative</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Best case</div>
+        <div class="s-value pos" id="r-max">—</div>
+        <div class="s-sub">Max outcome</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Worst case</div>
+        <div class="s-value" id="r-min">—</div>
+        <div class="s-sub">Min outcome</div>
       </div>
     </div>
-  </div>
 
-  <div id="tab-help" class="section">
-    <div class="card">
-      <div class="help-section">
-        <h3>What is a Monte Carlo simulation?</h3>
-        <p>Instead of assuming a fixed return every year, the simulator runs 10,000 different retirement scenarios — each with a different random sequence of market returns and inflation rates. At the end, you see what percentage of those scenarios left the portfolio intact. That is your survival rate.</p>
+    <div class="chart-wrap">
+      <div class="panel-title">Distribution of end balances</div>
+      <canvas id="distChart" height="200"></canvas>
+    </div>
+
+    <div class="pct-grid">
+      <div class="pct-card"><div class="p-label">10th pct</div><div class="p-value" id="p10">—</div></div>
+      <div class="pct-card"><div class="p-label">25th pct</div><div class="p-value" id="p25">—</div></div>
+      <div class="pct-card"><div class="p-label">50th pct</div><div class="p-value" id="p50">—</div></div>
+      <div class="pct-card"><div class="p-label">75th pct</div><div class="p-value" id="p75">—</div></div>
+      <div class="pct-card"><div class="p-label">90th pct</div><div class="p-value" id="p90">—</div></div>
+    </div>
+
+    <div class="survival-panel">
+      <div class="survival-header">
+        <span>Portfolio survival rate</span>
+        <span class="s-pct" id="r-survival">—</span>
       </div>
-      <div class="help-section">
-        <h3>How to read the survival curve</h3>
-        <p>The curve starts at 100% on the left — all 10,000 trials are alive in year one. Each year the line drops as some trials run out of money. A flat line staying near the top is excellent. A steep early drop means the withdrawal rate is too aggressive. The final point on the right is your overall survival rate.</p>
-      </div>
-      <div class="help-section">
-        <h3>How each trial works</h3>
-        <div class="help-step"><div class="step-num">1</div><div class="step-text">Start with your portfolio value.</div></div>
-        <div class="help-step"><div class="step-num">2</div><div class="step-text">Withdraw the annual amount at the start of each year, adjusted for cumulative inflation.</div></div>
-        <div class="help-step"><div class="step-num">3</div><div class="step-text">Apply a random market return for the year.</div></div>
-        <div class="help-step"><div class="step-num">4</div><div class="step-text">Apply a random inflation rate for the year.</div></div>
-        <div class="help-step"><div class="step-num">5</div><div class="step-text">Repeat for the number of simulation years. If the portfolio hits zero the trial fails.</div></div>
-      </div>
-      <div class="help-section">
-        <h3>What survival rate should I aim for?</h3>
-        <p>Most financial planners suggest targeting 85–95%. A 90% rate means 9 out of 10 simulated retirements lasted the full period. Higher is safer but may mean withdrawing less than you could.</p>
-      </div>
-      <div class="help-section">
-        <h3>Suggested starting inputs</h3>
-        <div class="formula-box">Mean return:        8.5%  (VBIAX)
-Std dev return:    10.0%  (VBIAX)
-Mean inflation:     2.5%
-Std dev inflation:  1.5%
-Years:               30</div>
-      </div>
-      <div class="help-section">
-        <h3>Using with the Endowment Planner</h3>
-        <p>Find a withdrawal rate here that gives 90%+ survival, then enter that rate into the Endowment Withdrawal Planner to manage your withdrawals year by year using the Yale smoothing formula.</p>
-      </div>
-      <div class="help-section">
-        <h3>Installing on iPhone</h3>
-        <p>Open this page in Safari. Tap the Share button, then tap <strong>Add to Home Screen</strong>. The app installs and opens full-screen like a native app and works offline.</p>
+      <div class="survival-track">
+        <div class="survival-fill" id="survival-fill" style="width:0%"></div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Help Overlay -->
+<div class="help-overlay" id="help-overlay">
+  <div class="help-box">
+    <div class="help-header">
+      <h2>How This App Works</h2>
+      <button class="help-close" onclick="toggleHelp()">Close</button>
+    </div>
+
+    <div class="help-section">
+      <h3>What is Monte Carlo?</h3>
+      <p>A Monte Carlo simulation runs your retirement scenario thousands of times, each time using a different random sequence of market returns and inflation. This gives you a realistic picture of what could happen across a wide range of market conditions — good years, bad years, crashes, and recoveries.</p>
+      <p>This app runs 10,000 trials. Each trial simulates your full retirement (e.g., 30 years) with different random returns each year. The results show you how often your portfolio survived and how much was left at the end.</p>
+    </div>
+
+    <div class="help-section">
+      <h3>Understanding the inputs</h3>
+      <ul>
+        <li><strong>Initial wealth</strong> — Your starting portfolio value on the day you retire.</li>
+        <li><strong>Withdrawal %</strong> — The percentage of your starting portfolio you plan to withdraw in year one, then inflation-adjusted each year. For example, 3.2% of $1,250,000 = $40,000 year one.</li>
+        <li><strong>Simulation years</strong> — How many years to simulate. 30 years is the standard planning horizon. Use 25 for a shorter test.</li>
+        <li><strong>Market return mean</strong> — The average annual return you expect from your fund.</li>
+        <li><strong>Market return std dev</strong> — How much the return varies year to year. A higher number means more volatility.</li>
+        <li><strong>Inflation mean</strong> — The average annual inflation rate you expect.</li>
+        <li><strong>Inflation std dev</strong> — How much inflation varies year to year.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>How to choose your inputs</h3>
+      <p>The best inputs come from your own fund's actual historical performance. Here is how to calculate them:</p>
+      <ul>
+        <li>Gather your fund's annual returns for as many years as possible</li>
+        <li>Calculate the average (mean) of all those annual returns</li>
+        <li>Calculate the standard deviation — this measures how much the returns varied year to year</li>
+        <li>Do the same for inflation using historical CPI data</li>
+      </ul>
+      <p>The inputs currently loaded are based on S&P 500 and CPI data from 1928 through 2025 — 97 years of actual market history including the Great Depression, World War II, the 1970s stagflation, the 2008 crisis, and COVID.</p>
+      <div class="highlight-box">
+        <p>Using your own fund's historical data is better than generic assumptions — it reflects the actual volatility and returns of the investment you hold.</p>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3>Historical reference data (1928–2025)</h3>
+      <table class="ref-table">
+        <tr><th>Input</th><th>Historical value</th><th>Source</th></tr>
+        <tr><td>Market return mean</td><td>7.5%</td><td>S&P 500 annual returns</td></tr>
+        <tr><td>Market return std dev</td><td>18.2%</td><td>S&P 500 annual returns</td></tr>
+        <tr><td>Inflation mean</td><td>3.1%</td><td>US CPI annual data</td></tr>
+        <tr><td>Inflation std dev</td><td>3.7%</td><td>US CPI annual data</td></tr>
+      </table>
+      <p style="margin-top:8px;">Note: If you hold a blended fund like a 70/30 stock/bond fund, your mean return will be lower and your std dev will also be lower than the pure S&P 500 figures above. Use your fund's actual numbers for the most accurate results.</p>
+    </div>
+
+    <div class="help-section">
+      <h3>Understanding the results</h3>
+      <ul>
+        <li><strong>Median end balance</strong> — Half of the 10,000 trials ended above this amount, half below. This is the most realistic middle-ground outcome.</li>
+        <li><strong>Average end balance</strong> — The mathematical mean of all 10,000 ending balances. Usually higher than the median because a few very good runs pull it up.</li>
+        <li><strong>Std deviation</strong> — How spread out the outcomes are. A large number means a wide range of possible results.</li>
+        <li><strong>Ruin rate</strong> — The percentage of trials where the portfolio ran out of money before the end of the simulation. You want this as low as possible — ideally under 5%.</li>
+        <li><strong>Best case / Worst case</strong> — The single best and worst outcomes across all 10,000 trials.</li>
+        <li><strong>Distribution chart</strong> — Shows the shape of all 10,000 outcomes. A curve shifted to the right means most trials ended well.</li>
+        <li><strong>Percentiles</strong> — The 10th percentile means 90% of trials did better than this. The 90th percentile means only 10% did better. Use the 10th percentile as your conservative planning number.</li>
+        <li><strong>Survival rate</strong> — The percentage of trials where money remained at the end. The complement of the ruin rate.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>Tips for getting the most out of this app</h3>
+      <ul>
+        <li>Run the simulation multiple times — results vary slightly each run because the returns are random. The overall picture should stay consistent.</li>
+        <li>Test different withdrawal rates (3%, 3.2%, 3.5%, 4%) to see how the ruin rate changes.</li>
+        <li>Test different time horizons (25, 30, 35 years) to understand the effect of longevity on your plan.</li>
+        <li>A ruin rate under 5% with a 30-year horizon at your chosen withdrawal rate is generally considered a safe plan.</li>
+        <li>Use the 10th percentile outcome — not the median — as your conservative planning floor.</li>
+        <li>Once you've chosen a withdrawal rate here, use the Endowment Withdrawal Planner app to execute the strategy year by year.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>How this app is built</h3>
+      <p>The simulation runs entirely in your browser using JavaScript — no data is sent anywhere, no server is involved, and nothing is stored or tracked. Your numbers stay completely private.</p>
+      <ul>
+        <li><strong>Random number generation</strong> — Each trial draws returns and inflation from a normal distribution using the Box-Muller algorithm, the same mathematical approach used in professional Monte Carlo tools. The generator is freshly seeded each run so every simulation is independent.</li>
+        <li><strong>10,000 trials</strong> — Each trial simulates the full retirement horizon year by year. Returns and inflation are drawn independently for every year of every trial.</li>
+        <li><strong>Statistics</strong> — Mean, median, percentiles, and standard deviation are calculated directly from all 10,000 raw results with no approximation or rounding during calculation.</li>
+        <li><strong>Histogram display</strong> — The chart clips the display at the 1st and 99th percentile for readability. All statistics shown above the chart use the full unclipped dataset.</li>
+        <li><strong>Technology</strong> — Built with plain HTML, CSS, and JavaScript. No frameworks, no tracking, no ads.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h3>Verify it yourself</h3>
+      <p>Want to confirm the math engine is working correctly? Enter these round numbers where the result is easy to calculate by hand:</p>
+      <table class="ref-table">
+        <tr><th>Input</th><th>Value</th></tr>
+        <tr><td>Initial wealth</td><td>$1,000,000</td></tr>
+        <tr><td>Withdrawal %</td><td>0%</td></tr>
+        <tr><td>Years</td><td>10</td></tr>
+        <tr><td>Market return mean</td><td>7%</td></tr>
+        <tr><td>Market return std dev</td><td>0%</td></tr>
+        <tr><td>Inflation mean</td><td>0%</td></tr>
+        <tr><td>Inflation std dev</td><td>0%</td></tr>
+      </table>
+      <div class="highlight-box" style="margin-top:10px;">
+        <p>With zero withdrawals and zero volatility, every trial compounds at exactly 7% for 10 years. The correct answer is <strong>$1,967,151</strong>. All 10,000 trials should produce the same result — median, mean, and all percentiles should show $1,967,151, and the ruin rate should be 0%.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+  let chart = null;
+  let darkMode = false;
 
-  var survChart = null;
-
-  function showTab(name) {
-    var names = ['inputs','results','help'];
-    document.querySelectorAll('.tab-btn').forEach(function(t,i){ t.classList.toggle('active', names[i]===name); });
-    document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
-    document.getElementById('tab-'+name).classList.add('active');
+  // Load saved dark mode preference
+  if (localStorage.getItem('mc_dark') === '1') {
+    darkMode = true;
+    document.body.classList.add('dark');
+    document.getElementById('dark-btn').textContent = 'Light';
   }
 
-  function randn() {
-    var u = 0, v = 0;
-    while (!u) u = Math.random();
-    while (!v) v = Math.random();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  function toggleDark() {
+    darkMode = !darkMode;
+    document.body.classList.toggle('dark', darkMode);
+    document.getElementById('dark-btn').textContent = darkMode ? 'Light' : 'Dark';
+    localStorage.setItem('mc_dark', darkMode ? '1' : '0');
+    if (chart) updateChartTheme();
+  }
+
+  function toggleHelp() {
+    document.getElementById('help-overlay').classList.toggle('show');
+  }
+
+  // Update withdrawal hint
+  document.getElementById('initial_wealth').addEventListener('input', updateHint);
+  document.getElementById('withdrawal_pct').addEventListener('input', updateHint);
+
+  function updateHint() {
+    const w = parseFloat(document.getElementById('initial_wealth').value) || 0;
+    const p = parseFloat(document.getElementById('withdrawal_pct').value) || 0;
+    document.getElementById('withdrawal-hint').textContent =
+      'Year 1 withdrawal: ' + fmt(w * p / 100);
   }
 
   function fmt(n) {
-    if (n < 0) return '-$' + Math.round(Math.abs(n)).toLocaleString();
-    return '$' + Math.round(n).toLocaleString();
+    const abs = Math.abs(n);
+    let s;
+    if (abs >= 1e9)      s = '$' + (n/1e9).toFixed(2) + 'B';
+    else if (abs >= 1e6) s = '$' + (n/1e6).toFixed(2) + 'M';
+    else if (abs >= 1e3) s = '$' + Math.round(n/1e3) + 'K';
+    else                 s = '$' + Math.round(n);
+    return n < 0 ? '-$' + s.replace('-$','').replace('$','') : s;
   }
 
-  function runSimulation() {
-    var wealth = parseFloat(document.getElementById('i-wealth').value);
-    var wdPct  = parseFloat(document.getElementById('i-wd').value) / 100;
-    var years  = parseInt(document.getElementById('i-years').value);
-    var rm     = parseFloat(document.getElementById('i-rm').value) / 100;
-    var rs     = parseFloat(document.getElementById('i-rs').value) / 100;
-    var im     = parseFloat(document.getElementById('i-im').value) / 100;
-    var is_    = parseFloat(document.getElementById('i-is').value) / 100;
+  function pct(n) { return parseFloat(n).toFixed(2) + '%'; }
 
-    if ([wealth,wdPct,years,rm,rs,im,is_].some(isNaN)) { alert('Please fill in all fields.'); return; }
+  function getThemeColor() { return darkMode ? 'rgba(90,153,119,0.75)' : 'rgba(61,107,87,0.72)'; }
+  function getGridColor()  { return darkMode ? 'rgba(120,180,140,0.12)' : 'rgba(60,100,80,0.12)'; }
+  function getTextColor()  { return darkMode ? '#9abfac' : '#3d5a4e'; }
 
-    document.getElementById('run-btn').disabled = true;
+  function updateChartTheme() {
+    if (!chart) return;
+    chart.data.datasets[0].backgroundColor = getThemeColor();
+    chart.data.datasets[0].borderColor = darkMode ? '#5a9977' : '#3d6b57';
+    chart.options.scales.x.ticks.color = getTextColor();
+    chart.options.scales.y.ticks.color = getTextColor();
+    chart.options.scales.x.grid.color = getGridColor();
+    chart.options.scales.y.grid.color = getGridColor();
+    chart.update();
+  }
+
+  // Monte Carlo simulation in JavaScript
+  function randNormal(mean, std) {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return mean + std * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  function runSim() {
+    const initial_wealth   = parseFloat(document.getElementById('initial_wealth').value);
+    const withdrawal_pct   = parseFloat(document.getElementById('withdrawal_pct').value) / 100;
+    const avg_ret          = parseFloat(document.getElementById('avg_ret').value) / 100;
+    const std_ret          = parseFloat(document.getElementById('std_ret').value) / 100;
+    const avg_inf          = parseFloat(document.getElementById('avg_inf').value) / 100;
+    const std_inf          = parseFloat(document.getElementById('std_inf').value) / 100;
+    const years            = parseInt(document.getElementById('years').value);
+    const replications     = 10000;
+
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('results-area').style.display = 'none';
     document.getElementById('spinner').style.display = 'block';
+    document.getElementById('run-btn').disabled = true;
 
-    setTimeout(function() {
-      var N = 10000;
-      var initWd = wealth * wdPct;
-      var finals = [];
-      var survived = 0;
-      var aliveByYear = new Array(years).fill(0);
+    setTimeout(() => {
+      const end_balances = new Float64Array(replications);
 
-      for (var t = 0; t < N; t++) {
-        var p = wealth, wd = initWd, failYear = -1;
-        for (var y = 0; y < years; y++) {
-          p -= wd;
-          if (p <= 0) { p = 0; failYear = y; break; }
-          p *= (1 + rm + rs * randn());
-          wd *= (1 + im + is_ * randn());
+      for (let i = 0; i < replications; i++) {
+        let balance = initial_wealth;
+        let withdrawal = initial_wealth * withdrawal_pct;
+        for (let y = 0; y < years; y++) {
+          const ret = randNormal(avg_ret, std_ret);
+          const inf = randNormal(avg_inf, std_inf);
+          const earnings = balance * ret;
+          balance = balance + earnings - withdrawal;
+          withdrawal = withdrawal * (1 + inf);
         }
-        finals.push(p);
-        if (failYear === -1) {
-          survived++;
-          for (var y2 = 0; y2 < years; y2++) aliveByYear[y2]++;
-        } else {
-          for (var y3 = 0; y3 < failYear; y3++) aliveByYear[y3]++;
-        }
+        end_balances[i] = balance;
       }
 
-      finals.sort(function(a,b){ return a-b; });
-      var sr = (survived / N * 100).toFixed(1);
-      var p10 = finals[Math.floor(N*0.10)];
-      var p25 = finals[Math.floor(N*0.25)];
-      var p50 = finals[Math.floor(N*0.50)];
-      var p75 = finals[Math.floor(N*0.75)];
-      var p90 = finals[Math.floor(N*0.90)];
+      // Statistics
+      const sorted = Array.from(end_balances).sort((a, b) => a - b);
+      const mean = end_balances.reduce((a, b) => a + b, 0) / replications;
+      const median = sorted[Math.floor(replications / 2)];
+      const variance = end_balances.reduce((a, b) => a + (b - mean) ** 2, 0) / replications;
+      const std = Math.sqrt(variance);
+      const min = sorted[0];
+      const max = sorted[replications - 1];
+      const ruin = end_balances.filter(b => b < 0).length / replications;
+      const survival = 1 - ruin;
 
-      var el = document.getElementById('r-survival');
-      el.textContent = sr + '%';
-      el.className = 'survival-pct ' + (parseFloat(sr) >= 90 ? 's-green' : parseFloat(sr) >= 75 ? 's-yellow' : 's-red');
+      const pctile = (p) => sorted[Math.floor(p / 100 * replications)];
+      const percentiles = [10, 25, 50, 75, 90].map(pctile);
 
-      document.getElementById('r-survived').textContent = survived.toLocaleString();
-      document.getElementById('r-failed').textContent = (N-survived).toLocaleString();
-      document.getElementById('r-median').textContent = fmt(p50);
-      document.getElementById('p10').textContent = fmt(p10);
-      document.getElementById('p25').textContent = fmt(p25);
-      document.getElementById('p50').textContent = fmt(p50);
-      document.getElementById('p75').textContent = fmt(p75);
-      document.getElementById('p90').textContent = fmt(p90);
-      document.getElementById('u-wealth').textContent = fmt(wealth);
-      document.getElementById('u-wd').textContent = (wdPct*100).toFixed(1) + '%';
-      document.getElementById('u-yr').textContent = years + ' years';
-      document.getElementById('u-ret').textContent = (rm*100).toFixed(1) + '% / ' + (rs*100).toFixed(1) + '%';
-      document.getElementById('u-inf').textContent = (im*100).toFixed(1) + '% / ' + (is_*100).toFixed(1) + '%';
+      // Histogram — clip at 1st/99th
+      const p1  = pctile(1);
+      const p99 = pctile(99);
+      const clipped = sorted.filter(b => b >= p1 && b <= p99);
+      const bins = 40;
+      const binMin = p1;
+      const binMax = p99;
+      const binWidth = (binMax - binMin) / bins;
+      const counts = new Array(bins).fill(0);
+      const edges = [];
+      for (let b = 0; b <= bins; b++) edges.push(binMin + b * binWidth);
+      clipped.forEach(v => {
+        let idx = Math.floor((v - binMin) / binWidth);
+        if (idx >= bins) idx = bins - 1;
+        if (idx >= 0) counts[idx]++;
+      });
 
-      var survPcts = aliveByYear.map(function(a) { return parseFloat((a / N * 100).toFixed(2)); });
-      var xLabels = survPcts.map(function(_, i) { return (i+1) % 5 === 0 || i === 0 ? 'Yr ' + (i+1) : ''; });
-      buildChart(xLabels, survPcts, parseFloat(sr));
+      // Display
+      document.getElementById('r-median').textContent = fmt(median);
+      document.getElementById('r-mean').textContent   = fmt(mean);
+      document.getElementById('r-std').textContent    = fmt(std);
+      document.getElementById('r-max').textContent    = fmt(max);
+      const minEl = document.getElementById('r-min');
+      minEl.textContent = fmt(min);
+      minEl.className = 's-value ' + (min < 0 ? 'neg' : 'pos');
+      document.getElementById('r-ruin').textContent     = pct(ruin * 100);
+      document.getElementById('r-survival').textContent = pct(survival * 100) + ' survived';
+      document.getElementById('survival-fill').style.width = (survival * 100).toFixed(2) + '%';
 
-      document.getElementById('results-empty').style.display = 'none';
-      document.getElementById('results-content').style.display = 'block';
-      document.getElementById('run-btn').disabled = false;
-      document.getElementById('spinner').style.display = 'none';
-      showTab('results');
-    }, 30);
-  }
+      const pLabels = ['p10','p25','p50','p75','p90'];
+      percentiles.forEach((v, i) => document.getElementById(pLabels[i]).textContent = fmt(v));
 
-  function buildChart(labels, data, finalSr) {
-    if (survChart) { survChart.destroy(); survChart = null; }
-    var lineColor = finalSr >= 90 ? '#2d6b4f' : finalSr >= 75 ? '#b38600' : '#8b2020';
-    var fillColor = finalSr >= 90 ? 'rgba(45,107,79,0.12)' : finalSr >= 75 ? 'rgba(179,134,0,0.12)' : 'rgba(139,32,32,0.12)';
-
-    survChart = new Chart(document.getElementById('surv-chart'), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: data,
-          borderColor: lineColor,
-          backgroundColor: fillColor,
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.3,
-          pointRadius: 0,
-          pointHoverRadius: 5
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              title: function(items) { return 'Year ' + (items[0].dataIndex + 1); },
-              label: function(item) { return item.raw.toFixed(1) + '% of portfolios surviving'; }
-            }
-          }
+      // Chart
+      const midpoints = edges.slice(0, -1).map((e, i) => fmt((e + edges[i+1]) / 2));
+      if (chart) chart.destroy();
+      const ctx = document.getElementById('distChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: midpoints,
+          datasets: [{
+            data: counts,
+            backgroundColor: getThemeColor(),
+            borderColor: darkMode ? '#5a9977' : '#3d6b57',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.45,
+            pointRadius: 0
+          }]
         },
-        scales: {
-          x: { ticks: { font: { size: 10 }, maxRotation: 0 }, grid: { display: false } },
-          y: {
-            min: 0, max: 100,
-            ticks: { font: { size: 10 }, callback: function(v) { return v + '%'; }, stepSize: 20 },
-            grid: { color: 'rgba(0,0,0,0.05)' }
+        options: {
+          responsive: true,
+          animation: { duration: 400 },
+          plugins: { legend: { display: false }, tooltip: {
+            callbacks: { label: ctx => 'Trials: ' + ctx.parsed.y.toLocaleString() }
+          }},
+          scales: {
+            x: { ticks: { color: getTextColor(), maxTicksLimit: 6, maxRotation: 0, font: { size: 11 } }, grid: { color: getGridColor() } },
+            y: { ticks: { color: getTextColor(), font: { size: 11 }, callback: v => v.toLocaleString() }, grid: { color: getGridColor() } }
           }
         }
-      }
-    });
+      });
+
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('results-area').style.display = 'flex';
+      document.getElementById('run-btn').disabled = false;
+
+    }, 50);
   }
 </script>
 </body>
