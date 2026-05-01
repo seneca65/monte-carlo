@@ -422,6 +422,7 @@
 
   // Monte Carlo simulation in JavaScript
   function randNormal(mean, std) {
+    if (std === 0) return mean;
     let u = 0, v = 0;
     while (u === 0) u = Math.random();
     while (v === 0) v = Math.random();
