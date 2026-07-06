@@ -1,59 +1,62 @@
 # Monte Carlo Retirement Simulator
 
-A mobile-friendly Progressive Web App (PWA) that runs 10,000 retirement simulations to calculate the probability that your portfolio will last through retirement.
+A retirement withdrawal simulator that runs entirely in the browser as a
+Progressive Web App. No server, no tracking, no data leaves your device.
+Built with plain HTML, CSS, and JavaScript (Chart.js for the chart).
 
-## What it does
+Each run performs 10,000 trials. Every trial simulates the full retirement
+horizon year by year: the withdrawal is taken at the start of each year,
+the remaining balance earns that year's market return, and the withdrawal
+is adjusted for inflation annually. Results show survival rate, ruin rate,
+median and mean ending balances, percentiles (10th–90th), and a
+distribution chart.
 
-Each simulation runs 10,000 independent trials. In each trial:
+## Two versions
 
-1. Start with your portfolio value
-2. Withdraw the annual amount at the **beginning** of each year (adjusted for cumulative inflation)
-3. Apply a **random** market return for the year (drawn from a normal distribution)
-4. Apply a **random** inflation rate for the year (drawn from a normal distribution)
-5. Repeat for the number of simulation years
-6. If the portfolio reaches zero, the trial fails
+| File | URL | Description |
+|------|-----|-------------|
+| `index.html` | [Original](https://seneca65.github.io/monte-carlo/) | Normal-distribution engine only (Box-Muller) |
+| `monte-carlo-v2.html` | [Version 2](https://seneca65.github.io/monte-carlo/monte-carlo-v2.html) | Adds a bootstrap engine alongside the original |
 
-After 10,000 trials, the app reports:
-- **Survival rate** — percentage of trials where the portfolio lasted the full period
-- **Percentile table** — 10th, 25th, 50th, 75th, 90th percentile final balances
-- **Histogram** — distribution of all 10,000 final balances
-- **Color-coded survival rate** — green ≥90%, yellow ≥75%, red below 75%
+## Simulation engines (v2)
 
-## Adjustable inputs
+**Normal distribution (Box-Muller)** — Each simulated year draws the market
+return and inflation from bell-shaped distributions defined by the mean and
+standard deviation inputs. Fully adjustable, so assumptions can include a
+deliberate margin of safety.
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| Starting portfolio | $1,000,000 | Total invested balance at retirement |
-| Withdrawal rate | 4% | Annual withdrawal as % of starting portfolio |
-| Simulation years | 30 | Length of retirement to simulate |
-| Mean return | 7.5% | Expected average annual portfolio return |
-| Std dev of return | 12% | Year-to-year variability of returns |
-| Mean inflation | 2.5% | Expected average annual inflation |
-| Std dev of inflation | 1.5% | Year-to-year variability of inflation |
+**Bootstrap (historical)** — Each simulated year picks a random year from
+1928–2025 and uses that year's *actual* 60/40 stock/bond blended return and
+its *actual* inflation, together as a pair. This preserves real extremes
+(1931: −27.3%) and real return/inflation pairings (1974: −14.7% return with
+11% inflation). No distribution shape is assumed. The mean/std dev inputs
+are ignored in this mode.
 
-## Installing on iPhone
+Running both engines at the same withdrawal rate and horizon is a useful
+cross-check: with matched inputs they agree within about one percentage
+point, with bootstrap typically slightly lower — the effect of real
+history's fat tails.
 
-1. Open the app URL in **Safari**
-2. Tap the **Share** button (box with arrow at the bottom)
-3. Tap **Add to Home Screen**
-4. The app installs and opens full-screen like a native app
+## Historical data
 
-## Using on desktop
+The embedded series covers 98 years (1928–2025):
 
-Open the URL in any browser — no installation required.
+- 60/40 blend = 0.6 × S&P 500 total return + 0.4 × 10-year US Treasury
+  total return, computed per year
+- Inflation = annual US CPI
+- Source: Aswath Damodaran, NYU Stern — *Historical Returns on Stocks,
+  Bonds and Bills* (January 2026 update)
+- Blend statistics: mean 9.04%, standard deviation 12.12%
 
-## Using with the Endowment Withdrawal Planner
+## Verify the engine
 
-Use this simulator to find a withdrawal rate that gives you a survival rate you are comfortable with (typically 90% or higher). Then enter that rate into the [Endowment Withdrawal Planner](https://seneca65.github.io/endowment-planner) to manage your annual withdrawals using the Yale smoothing formula with guard rail zones.
+With the engine set to Normal, enter: initial wealth $1,000,000,
+withdrawal 0%, 10 years, return mean 7%, and all standard deviations and
+inflation set to 0. Every trial should produce exactly **$1,967,151**
+(1,000,000 × 1.07¹⁰) with a 0% ruin rate.
 
-## Running locally
+## Companion app
 
-No server required. Open `index.html` in any browser.
-
-## Files
-
-| File | Purpose |
-|------|---------|
-| `index.html` | The complete app — simulation engine + UI |
-| `manifest.json` | PWA install metadata |
-| `sw.js` | Service worker for offline use |
+The [Endowment Withdrawal Planner](https://seneca65.github.io/endowment-planner/)
+executes a chosen withdrawal strategy year by year using the Yale
+smoothing formula with guard rails.
